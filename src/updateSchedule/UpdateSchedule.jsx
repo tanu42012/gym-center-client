@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 import "react-clock/dist/Clock.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useLoaderData } from "react-router-dom";
+import Swal from "sweetalert2";
 const formatTime12Hour = (date) => {
   let hours = date.getHours();
   const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -14,7 +16,49 @@ const formatTime12Hour = (date) => {
 };
 
 const UpdateSchedule = () => {
-  const handleUpdateSchedule = () => {};
+  const data=useLoaderData();
+  const [title,setTitle]=useState(data?.title);
+  const [date,setDate]=useState(data?.date);
+  const [day,setDay]=useState(data?.day);
+  const[hour,setHour]=useState(data?.hour);
+
+  console.log(data);
+  const handleUpdateSchedule = (e) => {
+    e.preventDefault();
+
+    
+
+
+    const updateData={
+      title:title,
+      day:day,
+      hour:hour,
+      date:date,
+
+    };
+    fetch(`http://localhost:8800/schedule/${data?._id}`,{
+      method:'PUT',
+      headers:{
+        "content-type":"application/json"
+      },
+      body:JSON.stringify(updateData)
+    })
+    .then((res)=>res.json())
+    .then((data)=>{
+      if(data?.modifiedCount>0){
+        Swal.fire('data updated successfully');
+      }
+    });
+
+      
+      
+   
+    
+    
+      
+    
+  };
+  console.log(title);
   return (
     <div>
       <div className="bg-[#F4F3F0] lg:p-24">
@@ -28,15 +72,20 @@ const UpdateSchedule = () => {
               <input
                 type="text"
                 name="Title"
+                value={title}
+                onChange={(e)=>setTitle(e.target.value)}
                 className="input input-bordered"
                 required
               />
             </div>
             <div className="form-control lg:w-1/2 mt-6 md:mt-0">
               <label className="label font-bold">
-                <span className="label-text">Day</span>
+                <span className="label-text">Date</span>
               </label>
-              <DatePicker className="input input-bordered w-full" />
+              <DatePicker className="input input-bordered w-full"
+              value={date}
+              onChange={(date)=>setDate(date.toLocaleDateString("en-CA"))}
+               />
             </div>
           </div>
           <div className="flex gap-6 ">
@@ -45,7 +94,10 @@ const UpdateSchedule = () => {
                 <span className="label-text font-bold">Day</span>
               </label>
 
-              <select className="input input-bordered " name="day" id="day">
+              <select className="input input-bordered " name="day" id="day"
+              value={day}
+              onChange={(e)=>setDay(e.target.value)}
+              >
                 <option value="sunday">Sunday</option>
                 <option value="monday">Monday</option>
                 <option value="tuesday">Tuesday</option>
@@ -62,6 +114,10 @@ const UpdateSchedule = () => {
 
               <DatePicker
                 className="input input-bordered w-full"
+                value={hour}
+                onChange={(date)}
+
+                
                 readOnly
                 showTimeSelect
                 showTimeSelectOnly

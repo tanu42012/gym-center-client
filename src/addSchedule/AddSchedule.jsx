@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "react-clock/dist/Clock.css";
+import { formatHour } from "react-clock/src/shared/hourFormatter.js";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -23,10 +24,33 @@ const AddCoffee = () => {
   const handleAddSchedule = (e) => {
     e.preventDefault();
     const form = e.target;
-    // const formatHour = formatTime12Hour(selectedTime);
-    // const formattedDate = startDate.toLocaleDateString("en-CA");
-    // const title = form.title.value;
-    // const day = form.day.value;
+    const formatHour = formatTime12Hour(selectedTime);
+    const formattedDate = startDate.toLocaleDateString("en-CA");
+    const title = form.title.value;
+    const day = form.day.value;
+    // const date = form.date.value;
+    // const time = form.time.value;
+    // console.log(title,day,time, date)
+    const postData={
+      title:title,
+      day:day,
+      hour: formatHour,
+      date:formattedDate,
+    }
+console.log(postData);
+fetch('http://localhost:8800/schedule',{
+  method:'POST',
+  headers:{
+    "content-type":"application/json"
+  },
+  body:JSON.stringify(postData)
+})
+.then((res)=>res.json())
+.then(data=>
+  console.log(data)
+)
+
+
   };
 
   return (
@@ -47,12 +71,12 @@ const AddCoffee = () => {
                 required
               />
             </div>
-            <div className="form-control  lg:w-1/2 mt-6 md:mt-0">
+            <div className="form-control  lg:w-1/2 mt-6 md:mt-0" >
               <label className="label font-bold">
-                <span className="label-text">Day</span>
+                <span className="label-text">Date</span>
               </label>
               <DatePicker
-                className="input input-bordered w-full"
+                className="input input-bordered w-full" name="date"
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
               />
@@ -74,13 +98,15 @@ const AddCoffee = () => {
                 <option value="saturday">Saturday</option>
               </select>
             </div>
-            <div className="form-control lg:w-1/2 mt-6 md:mt-0">
-              <label className="label font-bold">
-                <span className="label-text">Time</span>
+            <div className="form-control lg:w-1/2 mt-6 md:mt-0" >
+              <label className="label font-bold" >
+                <span className="label-text "
+               
+                >Time</span>
               </label>
 
               <DatePicker
-                className="input input-bordered w-full"
+                className="input input-bordered  w-full " name="time"
                 selected={selectedTime}
                 onChange={handleTimeChange}
                 showTimeSelect
