@@ -6,13 +6,13 @@ const Schedule = () => {
   const[search,setSearch]=useState("");
   const [scheduleData,setScheduleData]=useState([]);
   useEffect(()=>{
-    fetch("http://localhost:8800/schedule")
+    fetch(`http://localhost:8800/schedule?searchParams=${search}`)
     .then(res=>res.json())
     .then(data=>
      setScheduleData(data)
     )
 
-  },[]);
+  },[search]);
   const handleDelete=(id)=>{
     // console.log(id);
     fetch(`http://localhost:8800/schedule/${id}`,{
@@ -34,6 +34,7 @@ const Schedule = () => {
     })
 
   }
+  console.log(search);
 
 
 
@@ -47,6 +48,7 @@ const Schedule = () => {
           placeholder="search"
           className="input input-bordered w-full"
           required
+        
         />
       </div>
       <div className="w-1/2 mt-6 mx-auto bg-slate-50">
